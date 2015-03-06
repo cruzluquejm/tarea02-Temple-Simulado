@@ -90,7 +90,7 @@ def descenso_colinas(problema, maxit=1000000):
     return estado
 
 
-def temple_simulado(problema, calendarizador=lambda i: cal_expon(i, 100, 0.01), maxit=1000000):
+def temple_simulado(problema, calendarizador=lambda i: cal_expon(i, 100, 0.01), maxit=3):
     """
     Busqueda local por temple simulado
 

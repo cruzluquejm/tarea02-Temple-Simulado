@@ -37,8 +37,8 @@ Clase para un grafo simple no dirigido, únicamente para fines de graficación.
 
 """
 
-class problema_grafica_grafo(blocales.Problema):
 
+class problema_grafica_grafo(blocales.Problema):
     """
 
     Un grafo se define como un conjunto de vertices, en forma de lista (no conjunto, el orden es importante
@@ -53,7 +53,7 @@ class problema_grafica_grafo(blocales.Problema):
 
     """
 
-    def __init__(self, vertices, aristas, dimension_imagen = 400):
+    def __init__(self, vertices, aristas, dimension_imagen=400):
 
         self.vertices = vertices
 
@@ -94,7 +94,7 @@ class problema_grafica_grafo(blocales.Problema):
     """
 
     #######################################################################
-    #                          20 PUNTOS
+    # 20 PUNTOS
     #######################################################################
     # Por supuesto que esta no es la mejor manera de generar vecino para este problema.
     #
@@ -113,15 +113,60 @@ class problema_grafica_grafo(blocales.Problema):
     #    tu solución. ¿Como integras esta dispersión para utilizar la temperatura del temple simulado?
     #    ¿Que resultados obtienes con el nuevo método? Comenta tus resultados.
 
-    def vecino_aleatorio(self, estado, dispersion=None):
+    def vecino_aleatorio(self, estado, dispersion=5.5):
 
         #"""
 
         vecino = list(estado)
 
+        #Selecciona un vertice al azar
+
         i = random.randint(0, len(vecino) - 1)
 
-        vecino[i] = max(10, min(self.dim - 10, vecino[i] + random.choice([-1, 1])))
+        while i % 2 != 0:
+            i = random.randint(0, len(vecino) - 1)
+
+        j = i + 1
+
+        #Obten dos números aleatorios al azar entre -1 y 1
+
+        r1 = random.choice([-1, 1])
+        r2 = random.choice([-1, 1])
+
+        #Multiplicalos por el valor de la dispersión
+
+        #print 'Multiplicacion'
+
+        r1 = r1 * dispersion
+        r2 = r2 * dispersion
+
+        #print r1
+        #print r2
+
+        #print 'Redondeados'
+
+        r1 = round(r1)
+        r2 = round(r2)
+
+        #print r1
+        #print r2
+
+        #Sumale dichos valores (redondeados) a los valores originales de
+        #la posicion en x y y de la posicion de la arista. tomando en cuenta
+        #los límites que tiene la imagen (en numero máximo de pixeles).
+
+        s1 = vecino[i] + r1
+        s2 = vecino[j] + r2
+
+
+        vecino[i] = s1
+        vecino[j] = s2
+
+        arg1 = self.dim - 10
+        arg2 = random.choice([-1, 1])
+        #vecino[i] = max(10, min(self.dim - 10, vecino[i] + random.choice([-1, 1])))
+
+        #vecino[i] = max(10, min(arg1, vecino[i] + arg2))
 
         return vecino
 
@@ -205,7 +250,6 @@ class problema_grafica_grafo(blocales.Problema):
             den = (xFA - x0A) * (yFB - y0B) - (xFB - x0B) * (yFA - y0A) + 0.0
 
             if den == 0:
-
                 continue
 
             # Y entonces sacamos el largo del cruce, normalizado por den. Esto significa que en 0
@@ -217,7 +261,6 @@ class problema_grafica_grafo(blocales.Problema):
             puntoB = ((xFA - x0A) * (y0A - y0B) - (yFA - y0A) * (x0A - x0B)) / den
 
             if 0 < puntoA < 1 and 0 < puntoB < 1:
-
                 total += 1
 
         return total
@@ -251,7 +294,6 @@ class problema_grafica_grafo(blocales.Problema):
             # Penaliza la distancia si es menor a min_dist
 
             if dist < min_dist:
-
                 total += (1.0 - (dist / min_dist))
 
         return total
@@ -339,7 +381,6 @@ class problema_grafica_grafo(blocales.Problema):
     def dibuja_grafo(self, estado=None):
 
         if not estado:
-
             estado = self.estado_aleatorio()
 
         # Diccionario donde lugar[vertice] = (posX, posY)
@@ -355,14 +396,13 @@ class problema_grafica_grafo(blocales.Problema):
         dibujar = ImageDraw.ImageDraw(imagen)
 
         for (v1, v2) in self.aristas:
-
             dibujar.line((lugar[v1], lugar[v2]), fill=(255, 0, 0))
 
         for v in self.vertices:
-
             dibujar.text(lugar[v], v, (0, 0, 0))
 
         imagen.show()
+
 
 """
 
@@ -370,10 +410,11 @@ La función principal.
 
 """
 
-def main():
 
+def main():
     # Vamos a definir un grafo sencillo
 
+    """
     vertices_sencillo = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
     aristas_sencillo = [('B', 'G'),
@@ -387,11 +428,18 @@ def main():
                         ('F', 'A'),
                         ('C', 'B'),
                         ('H', 'F')]
+    """
+    vertices_sencillo = ['A', 'B', 'C', 'D']
+
+    aristas_sencillo = [('A', 'B'),
+                        ('A', 'C'),
+                        ('A', 'D'),
+                        ('D', 'B')]
 
     dimension = 400
 
     # Y vamos a hacer un dibujo del grafo sin decirle como hacer para ajustarlo
-
+    """
     grafo_sencillo = problema_grafica_grafo(vertices_sencillo, aristas_sencillo, dimension)
 
     estado_aleatorio = grafo_sencillo.estado_aleatorio()
@@ -399,10 +447,14 @@ def main():
     grafo_sencillo.dibuja_grafo(estado_aleatorio)
 
     print "Costo del estado aleatorio: ", grafo_sencillo.costo(estado_aleatorio)
-
+    """
     # Ahora vamos a encontrar donde deben de estar los puntos
 
     tiempo_inicial = time.time()
+
+    grafo_sencillo = problema_grafica_grafo(vertices_sencillo, aristas_sencillo, dimension)
+
+    estado_aleatorio = grafo_sencillo.estado_aleatorio()
 
     solucion = blocales.temple_simulado(grafo_sencillo, lambda i: 1000 * math.exp(-0.0001 * i))
 
@@ -417,7 +469,7 @@ def main():
     print "Tiempo de ejecución en segundos: ", tiempo_final - tiempo_inicial
 
     ##########################################################################
-    #                          20 PUNTOS
+    # 20 PUNTOS
     ##########################################################################
     # ¿Que valores para ajustar el temple simulado (T0 y K) son los que mejor resultado dan?
     #
