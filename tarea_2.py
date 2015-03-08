@@ -101,7 +101,7 @@ class problema_grafica_grafo(blocales.Problema):
     # Modifica la funcion para generar vecinos de tal manera que el vecino aleatorio se realice de
     # la siguiente manera:
     #
-    #   1. Selecciona un vertice al azar.
+    # 1. Selecciona un vertice al azar.
     #   2. Obten dos números aleatorios al azar entre -1 y 1.
     #   3. Multiplicalos por el valor de la dispersión.
     #   4. Sumale dichos valores (redondeados) a los valores originales de
@@ -113,64 +113,81 @@ class problema_grafica_grafo(blocales.Problema):
     #    tu solución. ¿Como integras esta dispersión para utilizar la temperatura del temple simulado?
     #    ¿Que resultados obtienes con el nuevo método? Comenta tus resultados.
 
-    def vecino_aleatorio(self, estado, dispersion=5.5):
+    def vecino_aleatorio(self, estado, dispersion=0.01):
+
+        """
+
+        vecino = list(estado)
+
+        i = random.randint(0, len(vecino) - 1)
+
+        vecino[i] = max(10, min(self.dim - 10, vecino[i] + random.choice([-1, 1])))
+
+        """
 
         #"""
 
         vecino = list(estado)
 
-        #Selecciona un vertice al azar
+        c = 0
 
-        i = random.randint(0, len(vecino) - 1)
+        while (c == 0):
 
-        while i % 2 != 0:
+            #Selecciona un vertice al azar
+
             i = random.randint(0, len(vecino) - 1)
 
-        j = i + 1
+            while i % 2 != 0:
+                i = random.randint(0, len(vecino) - 1)
 
-        #Obten dos números aleatorios al azar entre -1 y 1
+            j = i + 1
 
-        r1 = random.choice([-1, 1])
-        r2 = random.choice([-1, 1])
+            #Obten dos números aleatorios al azar entre -1 y 1
 
-        #Multiplicalos por el valor de la dispersión
+            r1 = random.choice([-1, 1])
 
-        #print 'Multiplicacion'
+            r2 = random.choice([-1, 1])
 
-        r1 = r1 * dispersion
-        r2 = r2 * dispersion
+            #Multiplicalos por el valor de la dispersión
 
-        #print r1
-        #print r2
+            #print 'Multiplicacion'
 
-        #print 'Redondeados'
+            r1 = r1 * dispersion
 
-        r1 = round(r1)
-        r2 = round(r2)
+            r2 = r2 * dispersion
 
-        #print r1
-        #print r2
+            #print r1
 
-        #Sumale dichos valores (redondeados) a los valores originales de
-        #la posicion en x y y de la posicion de la arista. tomando en cuenta
-        #los límites que tiene la imagen (en numero máximo de pixeles).
+            #print r2
 
-        s1 = vecino[i] + r1
-        s2 = vecino[j] + r2
+            #print 'Redondeados'
 
+            r1 = round(r1)
 
-        vecino[i] = s1
-        vecino[j] = s2
+            r2 = round(r2)
 
-        arg1 = self.dim - 10
-        arg2 = random.choice([-1, 1])
-        #vecino[i] = max(10, min(self.dim - 10, vecino[i] + random.choice([-1, 1])))
+            #print r1
 
-        #vecino[i] = max(10, min(arg1, vecino[i] + arg2))
+            #print r2
 
-        return vecino
+            #Sumale dichos valores (redondeados) a los valores originales de
+            #la posicion en x y y de la posicion de la arista. tomando en cuenta
+            #los límites que tiene la imagen (en numero máximo de pixeles).
+
+            s1 = vecino[i] + r1
+
+            s2 = vecino[j] + r2
+
+            if s1 < self.dim - 30 and s2 < self.dim - 30:
+                vecino[i] = s1
+
+                vecino[j] = s2
+
+                c = c + 1
 
         #"""
+
+        return vecino
 
     """
 
@@ -191,9 +208,9 @@ class problema_grafica_grafo(blocales.Problema):
 
         K1 = 1.0
 
-        K2 = 0.0
+        K2 = 1.0
 
-        K3 = 0.0
+        K3 = 1.0
 
         K4 = 0.0
 
@@ -279,7 +296,7 @@ class problema_grafica_grafo(blocales.Problema):
 
     """
 
-    def separacion_vertices(self, estado_dic, min_dist=50):
+    def separacion_vertices(self, estado_dic, min_dist=100):
 
         total = 0
 
@@ -294,7 +311,13 @@ class problema_grafica_grafo(blocales.Problema):
             # Penaliza la distancia si es menor a min_dist
 
             if dist < min_dist:
+                #print 'hello'
+
                 total += (1.0 - (dist / min_dist))
+
+                #print total
+
+        total = round(total)
 
         return total
 
@@ -324,7 +347,149 @@ class problema_grafica_grafo(blocales.Problema):
 
     def angulo_aristas(self, estado_dic):
 
-        return 0
+        costo = 0
+
+        for v in self.vertices:
+
+            lista_incidencias = []
+
+            for a in self.aristas:
+
+                if v == a[0]:
+                    lista_incidencias.append(a)
+
+                if v == a[1]:
+                    lista_incidencias.append(a)
+
+            #print 'Incide'
+
+            for v1, v2 in itertools.combinations(lista_incidencias, 2):
+
+                #print v1, v2
+
+                t1 = estado_dic[v1[0]]
+
+                t2 = estado_dic[v1[1]]
+
+                t3 = estado_dic[v2[0]]
+
+                t4 = estado_dic[v2[1]]
+
+                """
+
+                print estado_dic
+                print t1
+                print t2
+                print t3
+                print t4
+
+                """
+
+                ox = None
+                oy = None
+                cx1 = None
+                cy1 = None
+                cx2 = None
+                cy2 = None
+
+                if t1 == t3:
+
+                    #print 'c1'
+
+                    ox = t1[0]
+                    oy = t1[1]
+                    cx1 = t2[0]
+                    cy1 = t2[1]
+                    cx2 = t4[0]
+                    cy2 = t4[1]
+
+                if t1 == t4:
+
+                    #print 'c2'
+
+                    ox = t1[0]
+                    oy = t1[1]
+                    cx1 = t2[0]
+                    cy1 = t2[1]
+                    cx2 = t3[0]
+                    cy2 = t3[1]
+
+                if t2 == t3:
+
+                    #print 'c3'
+
+                    ox = t2[0]
+                    oy = t2[1]
+                    cx1 = t1[0]
+                    cy1 = t1[1]
+                    cx2 = t4[0]
+                    cy2 = t4[1]
+
+                if t2 == t4:
+
+                    #print 'c4'
+
+                    ox = t2[0]
+                    oy = t2[1]
+                    cx1 = t1[0]
+                    cy1 = t1[1]
+                    cx2 = t3[0]
+                    cy2 = t3[1]
+
+                """
+
+                print ox
+                print oy
+                print cx1
+                print cy1
+                print cx2
+                print cy2
+
+                """
+
+                vx1 = cx1 - ox
+                vy1 = cy1 - oy
+
+                vx2 = cx2 - ox
+                vy2 = cy2 - oy
+
+                """
+
+                print 'Coordenadas vectores'
+
+                print vx1
+                print vy1
+                print vx2
+                print vy2
+
+                """
+
+                producto_punto = abs((vx1 * vx2) + (vy1 * vy2))
+                r1 = math.sqrt((vx1 * vx1) + (vy1 * vy1))
+                r2 = math.sqrt((vx2 * vx2) + (vy2 * vy2))
+
+                """
+
+                print 'producto punto ',producto_punto
+                print 'r1 ',r1
+                print 'r2 ',r2
+
+                """
+
+                resultado = producto_punto/(r1*r2)
+
+                #print 'resultado ',resultado
+
+                angulo = math.acos(resultado)
+
+                #print 'angulo ',angulo
+
+                condicion = math.pi/6
+
+                if angulo < condicion:
+                    costo += 1
+
+        return costo
 
     """
 
@@ -414,7 +579,7 @@ La función principal.
 def main():
     # Vamos a definir un grafo sencillo
 
-    """
+    #"""
     vertices_sencillo = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
     aristas_sencillo = [('B', 'G'),
@@ -428,6 +593,8 @@ def main():
                         ('F', 'A'),
                         ('C', 'B'),
                         ('H', 'F')]
+    #"""
+
     """
     vertices_sencillo = ['A', 'B', 'C', 'D']
 
@@ -435,11 +602,11 @@ def main():
                         ('A', 'C'),
                         ('A', 'D'),
                         ('D', 'B')]
-
+    """
     dimension = 400
 
     # Y vamos a hacer un dibujo del grafo sin decirle como hacer para ajustarlo
-    """
+    #"""
     grafo_sencillo = problema_grafica_grafo(vertices_sencillo, aristas_sencillo, dimension)
 
     estado_aleatorio = grafo_sencillo.estado_aleatorio()
@@ -447,7 +614,7 @@ def main():
     grafo_sencillo.dibuja_grafo(estado_aleatorio)
 
     print "Costo del estado aleatorio: ", grafo_sencillo.costo(estado_aleatorio)
-    """
+    #"""
     # Ahora vamos a encontrar donde deben de estar los puntos
 
     tiempo_inicial = time.time()
@@ -477,7 +644,7 @@ def main():
     #
 
     ##########################################################################
-    #                          20 PUNTOS
+    # 20 PUNTOS
     ##########################################################################
     # En general para obtener mejores resultados del temple simulado, es necesario utilizar una
     # función de calendarización acorde con el metodo en que se genera el vecino aleatorio.

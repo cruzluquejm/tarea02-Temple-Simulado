@@ -90,7 +90,7 @@ def descenso_colinas(problema, maxit=1000000):
     return estado
 
 
-def temple_simulado(problema, calendarizador=lambda i: cal_expon(i, 100, 0.01), maxit=3):
+def temple_simulado(problema, calendarizador=lambda i: cal_expon(i, 100, 0.01), maxit=1000):
     """
     Busqueda local por temple simulado
 
@@ -112,7 +112,11 @@ def temple_simulado(problema, calendarizador=lambda i: cal_expon(i, 100, 0.01), 
         if temperatura < 1e-8:
             break
 
-        vecino = problema.vecino_aleatorio(estado)
+        if i == 0:
+            vecino = problema.vecino_aleatorio(estado)
+        else:
+            vecino = problema.vecino_aleatorio(estado,temperatura-calendarizador(i-1))
+
         costo_vecino = problema.costo(vecino)
         error = costo - costo_vecino
 
