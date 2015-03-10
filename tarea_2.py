@@ -53,7 +53,7 @@ class problema_grafica_grafo(blocales.Problema):
 
     """
 
-    def __init__(self, vertices, aristas, dimension_imagen=400):
+    def __init__(self, vertices, aristas, dimension_imagen = 400):
 
         self.vertices = vertices
 
@@ -101,7 +101,7 @@ class problema_grafica_grafo(blocales.Problema):
     # Modifica la funcion para generar vecinos de tal manera que el vecino aleatorio se realice de
     # la siguiente manera:
     #
-    # 1. Selecciona un vertice al azar.
+    #   1. Selecciona un vertice al azar.
     #   2. Obten dos números aleatorios al azar entre -1 y 1.
     #   3. Multiplicalos por el valor de la dispersión.
     #   4. Sumale dichos valores (redondeados) a los valores originales de
@@ -115,7 +115,7 @@ class problema_grafica_grafo(blocales.Problema):
 
     def vecino_aleatorio(self, estado, dispersion=0.01):
 
-        """
+        #"""
 
         vecino = list(estado)
 
@@ -123,9 +123,9 @@ class problema_grafica_grafo(blocales.Problema):
 
         vecino[i] = max(10, min(self.dim - 10, vecino[i] + random.choice([-1, 1])))
 
-        """
-
         #"""
+
+        """
 
         vecino = list(estado)
 
@@ -179,13 +179,14 @@ class problema_grafica_grafo(blocales.Problema):
             s2 = vecino[j] + r2
 
             if s1 < self.dim - 30 and s2 < self.dim - 30:
+
                 vecino[i] = s1
 
                 vecino[j] = s2
 
                 c = c + 1
 
-        #"""
+        """
 
         return vecino
 
@@ -201,6 +202,17 @@ class problema_grafica_grafo(blocales.Problema):
 
     """
 
+    # Como podras ver en los resultados, el costo inicial propuesto no hace figuras particularmente
+    # bonitas, y esto es porque lo único que considera es el numero de cruces.
+    #
+    # Una manera de buscar mejores resultados es incluir en el costo el angulo entre dos aristas conectadas
+    # al mismo vertice, dandole un mayor costo si el angulo es muy pequeño (positivo o negativo). Igualmente
+    # se puede penalizar el que dos nodos estén muy cercanos entre si en la gráfica.
+    #
+    # Así, vamos a calcular el costo en tres partes, una es el numero de cruces (ya programada), otra
+    # la distancia entre nodos (ya programada) y otro el angulo entre arista de cada nodo (para programar) y cada
+    # uno de estos criterios hay que agregarlo a la función de costo con un peso. Por último, puedes mejor el ..
+
     def costo(self, estado):
 
         # Inicializa fáctores lineales para los criterios más importantes
@@ -212,7 +224,7 @@ class problema_grafica_grafo(blocales.Problema):
 
         K3 = 1.0
 
-        K4 = 0.0
+        K4 = 1.0
 
         # Genera un diccionario con el estado y la posición para facilidad
 
@@ -222,17 +234,6 @@ class problema_grafica_grafo(blocales.Problema):
                 K2 * self.separacion_vertices(estado_dic) +
                 K3 * self.angulo_aristas(estado_dic) +
                 K4 * self.criterio_propio(estado_dic))
-
-        # Como podras ver en los resultados, el costo inicial propuesto no hace figuras particularmente
-        # bonitas, y esto es porque lo único que considera es el numero de cruces.
-        #
-        # Una manera de buscar mejores resultados es incluir en el costo el angulo entre dos aristas conectadas
-        # al mismo vertice, dandole un mayor costo si el angulo es muy pequeño (positivo o negativo). Igualmente
-        # se puede penalizar el que dos nodos estén muy cercanos entre si en la gráfica.
-        #
-        # Así, vamos a calcular el costo en tres partes, una es el numero de cruces (ya programada), otra
-        # la distancia entre nodos (ya programada) y otro el angulo entre arista de cada nodo (para programar) y cada
-        # uno de estos criterios hay que agregarlo a la función de costo con un peso. Por último, puedes mejor el ..
 
     """
 
@@ -267,6 +268,7 @@ class problema_grafica_grafo(blocales.Problema):
             den = (xFA - x0A) * (yFB - y0B) - (xFB - x0B) * (yFA - y0A) + 0.0
 
             if den == 0:
+
                 continue
 
             # Y entonces sacamos el largo del cruce, normalizado por den. Esto significa que en 0
@@ -278,6 +280,7 @@ class problema_grafica_grafo(blocales.Problema):
             puntoB = ((xFA - x0A) * (y0A - y0B) - (yFA - y0A) * (x0A - x0B)) / den
 
             if 0 < puntoA < 1 and 0 < puntoB < 1:
+
                 total += 1
 
         return total
@@ -311,7 +314,6 @@ class problema_grafica_grafo(blocales.Problema):
             # Penaliza la distancia si es menor a min_dist
 
             if dist < min_dist:
-                #print 'hello'
 
                 total += (1.0 - (dist / min_dist))
 
@@ -355,10 +357,8 @@ class problema_grafica_grafo(blocales.Problema):
 
             for a in self.aristas:
 
-                if v == a[0]:
-                    lista_incidencias.append(a)
+                if v == a[0] or v == a[1]:
 
-                if v == a[1]:
                     lista_incidencias.append(a)
 
             #print 'Incide'
@@ -464,25 +464,25 @@ class problema_grafica_grafo(blocales.Problema):
 
                 """
 
-                producto_punto = abs((vx1 * vx2) + (vy1 * vy2))
-                r1 = math.sqrt((vx1 * vx1) + (vy1 * vy1))
-                r2 = math.sqrt((vx2 * vx2) + (vy2 * vy2))
+                producto_punto = ((vx1 * vx2) + (vy1 * vy2))
+                r1 = math.sqrt((vx1 * vx1) + (vy1 * vy1)) + 0.01
+                r2 = math.sqrt((vx2 * vx2) + (vy2 * vy2)) + 0.01
 
                 """
 
-                print 'producto punto ',producto_punto
-                print 'r1 ',r1
-                print 'r2 ',r2
+                print 'producto punto ', producto_punto
+                print 'r1 ', r1
+                print 'r2 ', r2
 
                 """
 
-                resultado = producto_punto/(r1*r2)
+                resultado = abs(producto_punto/(r1*r2))
 
-                #print 'resultado ',resultado
+                #print 'resultado ', resultado
 
                 angulo = math.acos(resultado)
 
-                #print 'angulo ',angulo
+                #print 'angulo ', angulo
 
                 condicion = math.pi/6
 
@@ -515,7 +515,63 @@ class problema_grafica_grafo(blocales.Problema):
 
     def criterio_propio(self, estado_dic):
 
-        return 0
+        #print estado_dic
+
+        c1 = 0
+        c2 = 0
+        c3 = 0
+        c4 = 0
+
+        dim = self.dim
+
+        for v in self.vertices:
+
+            #print v
+
+            a,b = estado_dic[v]
+
+            #print a,b
+
+            if a <= dim/2 and b <= dim/2:
+
+                c1 += 1
+
+            if a <= dim and b <= dim/2:
+
+                c2 += 1
+
+            if a <= dim/2 and b <= dim:
+
+                c3 += 1
+
+            if a <= dim and b <= dim:
+
+                c4 += 1
+
+        total = 0
+        nvertices = round(len(self.vertices) / 4)
+
+        #print nvertices
+
+        if c1 > nvertices:
+
+            total += abs(nvertices - c1)
+
+        if c2 > nvertices:
+
+            total += abs(nvertices - c1)
+
+        if c3 > nvertices:
+
+            total += abs(nvertices - c1)
+
+        if c4 > nvertices:
+
+            total += abs(nvertices - c1)
+
+        #print total
+
+        return total
 
     """
 
@@ -603,6 +659,7 @@ def main():
                         ('A', 'D'),
                         ('D', 'B')]
     """
+
     dimension = 400
 
     # Y vamos a hacer un dibujo del grafo sin decirle como hacer para ajustarlo
@@ -613,27 +670,28 @@ def main():
 
     grafo_sencillo.dibuja_grafo(estado_aleatorio)
 
-    print "Costo del estado aleatorio: ", grafo_sencillo.costo(estado_aleatorio)
+    #print "Costo del estado aleatorio: ", grafo_sencillo.costo(estado_aleatorio)
     #"""
     # Ahora vamos a encontrar donde deben de estar los puntos
 
-    tiempo_inicial = time.time()
+    #tiempo_inicial = time.time()
 
     grafo_sencillo = problema_grafica_grafo(vertices_sencillo, aristas_sencillo, dimension)
 
-    estado_aleatorio = grafo_sencillo.estado_aleatorio()
+    #estado_aleatorio = grafo_sencillo.estado_aleatorio()
 
     solucion = blocales.temple_simulado(grafo_sencillo, lambda i: 1000 * math.exp(-0.0001 * i))
 
-    tiempo_final = time.time()
+    #tiempo_final = time.time()
 
     grafo_sencillo.dibuja_grafo(solucion)
 
-    print "\nUtilizando una calendarización exponencial con K = 1000 y delta = 0.0001"
+    #print "\nUtilizando una calendarización exponencial con K = 1000 y delta = 0.0001"
 
+    print "Costo del estado aleatorio: ", grafo_sencillo.costo(estado_aleatorio)
     print "Costo de la solución encontrada: ", grafo_sencillo.costo(solucion)
 
-    print "Tiempo de ejecución en segundos: ", tiempo_final - tiempo_inicial
+    #print "Tiempo de ejecución en segundos: ", tiempo_final - tiempo_inicial
 
     ##########################################################################
     # 20 PUNTOS
