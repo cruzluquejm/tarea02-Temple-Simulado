@@ -103,4 +103,4 @@ def prueba_temple_simulado(problema=ProblemaNreinas(8), K=100, delta=0.01):
 if __name__ == "__main__":
 
     #prueba_descenso_colinas(ProblemaNreinas(32), 10)
-    prueba_temple_simulado(ProblemaNreinas(4), 500, 0.01)
+    prueba_temple_simulado(ProblemaNreinas(64), 500, 0.01)
